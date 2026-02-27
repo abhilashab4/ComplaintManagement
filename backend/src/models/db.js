@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcryptjs');
+const { publishComplaint } = require('../services/sns.js'); // SNS service
 
 // In-memory storage
 const db = {
@@ -13,6 +14,7 @@ async function seedData() {
   const wardPassword = await bcrypt.hash('warden123', 10);
   const stuPassword = await bcrypt.hash('student123', 10);
 
+  // Users
   db.users = [
     {
       id: uuidv4(),
@@ -67,10 +69,7 @@ async function seedData() {
     }
   ];
 
-  const categories = ['Plumbing', 'Electrical', 'Cleanliness', 'Food', 'Security', 'Internet', 'Furniture', 'Other'];
-  const statuses = ['pending', 'in-progress', 'resolved', 'rejected'];
-  const priorities = ['low', 'medium', 'high', 'urgent'];
-
+  // Complaints
   const sampleComplaints = [
     { title: 'Water leaking from bathroom tap', category: 'Plumbing', description: 'The tap in bathroom is constantly leaking for 3 days now.', status: 'pending', priority: 'high' },
     { title: 'Room fan not working', category: 'Electrical', description: 'Ceiling fan stopped working suddenly.', status: 'in-progress', priority: 'medium' },
@@ -82,9 +81,11 @@ async function seedData() {
 
   const studentUsers = db.users.filter(u => u.role === 'student');
 
-  sampleComplaints.forEach((c, i) => {
+  for (let i = 0; i < sampleComplaints.length; i++) {
+    const c = sampleComplaints[i];
     const student = studentUsers[i % studentUsers.length];
-    db.complaints.push({
+
+    const complaint = {
       id: uuidv4(),
       ...c,
       studentId: student.id,
@@ -96,9 +97,29 @@ async function seedData() {
       resolvedAt: c.status === 'resolved' ? new Date().toISOString() : null,
       createdAt: new Date(Date.now() - (i * 24 * 60 * 60 * 1000)).toISOString(),
       updatedAt: new Date().toISOString()
-    });
-  });
+    };
 
+    db.complaints.push(complaint);
+
+    // ✅ Publish to SNS for Lambda
+    try {
+      await publishComplaint({
+        title: complaint.title,
+        description: complaint.description,
+        studentName: complaint.studentName,
+        roomNumber: complaint.roomNumber,
+        hostel: complaint.hostel,
+        rollNumber: complaint.rollNumber,
+        status: complaint.status,
+        createdAt: complaint.createdAt
+      });
+      console.log(`SNS Message Published for complaint: ${complaint.title}`);
+    } catch (err) {
+      console.error("SNS Publish Error:", err.message);
+    }
+  }
+
+  // Announcements
   db.announcements = [
     {
       id: uuidv4(),
@@ -123,6 +144,4 @@ async function seedData() {
   console.log('✅ Database seeded successfully');
 }
 
-seedData();
-
-module.exports = db;
+module.exports = { db, seedData };

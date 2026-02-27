@@ -1,22 +1,15 @@
-// const { SNSClient, PublishCommand } = require("@aws-sdk/client-sns");
+require('dotenv').config();
+const express = require('express');
+const { seedData } = require('./models/db');
 
-// const snsClient = new SNSClient({
-//   region: process.env.AWS_REGION,
-// });
+const app = express();
+app.use(express.json());
 
-// const publishComplaint = async (complaint) => {
-//   try {
-//     const command = new PublishCommand({
-//       TopicArn: process.env.SNS_TOPIC_ARN,
-//       Subject: "New Hostel Complaint",
-//       Message: JSON.stringify(complaint),
-//     });
+// ✅ Seed data and publish to SNS on startup (development only)
+(async () => {
+  await seedData();
+})();
 
-//     const response = await snsClient.send(command);
-//     console.log("SNS Message Published:", response.MessageId);
-//   } catch (error) {
-//     console.error("SNS Error:", error.message);
-//   }
-// };
-
-// module.exports = { publishComplaint };
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`Server running on port ${process.env.PORT || 3000}`);
+});
