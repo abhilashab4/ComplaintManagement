@@ -2,6 +2,14 @@ const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../models/db');
 const { authenticate, wardenOnly } = require('../middleware/auth');
+// import { publishComplaint } from "../services/sns.js";
+
+// await publishComplaint({
+//   title,
+//   description,
+//   student: req.user.id,
+//   createdAt: new Date(),
+// });
 
 const router = express.Router();
 
