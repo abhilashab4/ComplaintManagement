@@ -2,6 +2,8 @@ const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../models/db');
 const { authenticate, wardenOnly } = require('../middleware/auth');
+const { publishComplaint } = require("../services/snsClient");
+
 // import { publishComplaint } from "../services/sns.js";
 
 // await publishComplaint({
@@ -50,7 +52,9 @@ router.get('/:id', authenticate, (req, res) => {
 });
 
 // Create complaint (student only)
-router.post('/', authenticate, (req, res) => {
+
+// Create complaint (student only)
+router.post('/', authenticate, async (req, res) => {
   if (req.user.role !== 'student') return res.status(403).json({ error: 'Students only' });
 
   const { title, description, category, priority } = req.body;
@@ -78,6 +82,15 @@ router.post('/', authenticate, (req, res) => {
   };
 
   db.complaints.push(complaint);
+
+  // SEND EMAIL TO WARDEN VIA SNS
+  await publishComplaint({
+    title: complaint.title,
+    description: complaint.description,
+    student: complaint.studentName,
+    hostel: complaint.hostel
+  });
+
   res.status(201).json(complaint);
 });
 
