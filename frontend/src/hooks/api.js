@@ -1,9 +1,20 @@
 import axios from 'axios';
 
-// Use relative paths; Nginx will proxy /api calls to backend
+// Axios instance for all API calls
 const axiosInstance = axios.create({
-  baseURL: "/", // <- do not hardcode EC2 IP or port
-  withCredentials: true,
+  baseURL: '/',       // Nginx will proxy /api/ to backend
+  withCredentials: true, // if backend uses cookies
+});
+
+// Automatically attach token from localStorage to every request
+axiosInstance.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers['Authorization'] = `Bearer ${token}`;
+  }
+  return config;
+}, (error) => {
+  return Promise.reject(error);
 });
 
 export const api = {
@@ -53,3 +64,5 @@ export const CATEGORY_ICONS = {
   Furniture: '🪑',
   Other: '📋',
 };
+
+export default axiosInstance;
