@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const { seedData } = require('./models/db');
+const { seedData } = require('../models/db');
 
 const app = express();
 app.use(express.json());
