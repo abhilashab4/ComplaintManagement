@@ -25,25 +25,39 @@ app.get('/api/health', (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-// ✅ Seed DB + publish complaints on startup (dev only)
+// ✅ Seed DB on startup
 (async () => {
-  await seedData();
+  try {
+    await seedData();
+    console.log('✅ Database seeded successfully');
 
-  for (const complaint of db.complaints) {
-    await publishComplaint({
-      title: complaint.title,
-      description: complaint.description,
-      studentName: complaint.studentName,
-      roomNumber: complaint.roomNumber,
-      hostel: complaint.hostel,
-      rollNumber: complaint.rollNumber,
-      status: complaint.status,
-      createdAt: complaint.createdAt
-    });
+    // ✅ Publish complaints to SNS asynchronously
+    if (process.env.AWS_REGION && process.env.SNS_TOPIC_ARN) {
+      db.complaints.forEach(c => {
+        publishComplaint({
+          title: c.title,
+          description: c.description,
+          studentName: c.studentName,
+          roomNumber: c.roomNumber,
+          hostel: c.hostel,
+          rollNumber: c.rollNumber,
+          status: c.status,
+          createdAt: c.createdAt
+        }).catch(err => {
+          console.error('❌ Failed to publish complaint to SNS:', err.message);
+        });
+      });
+      console.log('⚡ SNS publishing started in background');
+    } else {
+      console.log('⚠️ AWS SNS not configured — skipping SNS publish');
+    }
+
+  } catch (err) {
+    console.error('❌ Error seeding DB:', err.message);
   }
-  console.log('✅ All seeded complaints published to SNS');
 })();
 
+// Start server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
