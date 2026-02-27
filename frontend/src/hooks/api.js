@@ -1,11 +1,9 @@
 import axios from 'axios';
 
-// 🔥 IMPORTANT: Change this to your EC2 public IP or domain
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://13.201.54.78:5000";
-
+// Use relative paths; Nginx will proxy /api calls to backend
 const axiosInstance = axios.create({
-  baseURL: API_BASE_URL,
-  withCredentials: true, // allow cookies if needed
+  baseURL: "/", // <- do not hardcode EC2 IP or port
+  withCredentials: true,
 });
 
 export const api = {
@@ -27,13 +25,9 @@ export const api = {
 };
 
 // Constants
-export const CATEGORIES = [
-  'Plumbing', 'Electrical', 'Cleanliness', 'Food', 'Security', 'Internet', 'Furniture', 'Other'
-];
-
-export const PRIORITIES = ['low', 'medium', 'high', 'urgent'];
-
-export const STATUSES = ['pending', 'in-progress', 'resolved', 'rejected'];
+export const CATEGORIES = ['Plumbing','Electrical','Cleanliness','Food','Security','Internet','Furniture','Other'];
+export const PRIORITIES = ['low','medium','high','urgent'];
+export const STATUSES = ['pending','in-progress','resolved','rejected'];
 
 export const STATUS_COLORS = {
   pending: 'badge-pending',
