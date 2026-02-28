@@ -1,4 +1,4 @@
-# Hostel Complaint Management System
+# 🏨 Hostel Complaint Management System
 
 A containerized full-stack web application deployed on AWS EC2 using Docker. The system integrates AWS SNS, AWS Lambda, and Amazon CloudWatch to implement an event-driven architecture for complaint notifications.
 
@@ -29,8 +29,8 @@ A containerized full-stack web application deployed on AWS EC2 using Docker. The
 
 The Hostel Complaint Management System allows:
 
-- Students to submit complaints
-- Wardens to manage and track complaints
+- **Students** to submit complaints
+- **Wardens** to manage and track complaints
 
 The application follows a containerized microservice architecture deployed on an AWS EC2 instance.
 
@@ -49,9 +49,9 @@ The application follows a containerized microservice architecture deployed on an
 
 ## 🚀 Deployment Environment
 
-- AWS EC2 Instance (Ubuntu)
-- Docker & Docker Compose installed
-- Security Group configured for:
+- **AWS EC2 Instance:** Ubuntu
+- **Docker & Docker Compose:** Installed
+- **Security Group Configured for:**
   - Port 22 (SSH)
   - Port 80 (HTTP)
 
@@ -63,22 +63,22 @@ The system runs two Docker containers:
 
 ### 1️⃣ Frontend Container
 
-- Built using React
-- Served using Nginx
-- Runs on Port 80
-- Acts as a Reverse Proxy
-- Forwards `/api` requests to backend
+- **Built using:** React
+- **Served using:** Nginx
+- **Runs on Port:** 80
+- **Acts as a Reverse Proxy**
+  - Forwards `/api` requests to the backend
 
 ### 2️⃣ Backend Container
 
-- Built using Node.js (Express)
-- Runs on Port 5000
-- Handles:
+- **Built using:** Node.js (Express)
+- **Runs on Port:** 5000
+- **Handles:**
   - Authentication
   - Complaint management
   - User management
-- Publishes complaint events to AWS SNS
-- Not publicly exposed
+- **Publishes complaint events to AWS SNS**
+- **Not publicly exposed**
 
 ---
 
@@ -90,7 +90,7 @@ Start the application using:
 docker-compose up --build -d
 ```
 
-To verify running containers:
+To verify running containers, use:
 
 ```bash
 docker ps
