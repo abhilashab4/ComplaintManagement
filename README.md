@@ -1,133 +1,148 @@
-# 🏨 Hostel Complaint Management System
+# Hostel Complaint Management System
 
-A full-stack web application for managing hostel complaints with separate interfaces for **Wardens** and **Students**.
+A containerized full-stack web application deployed on AWS EC2 using
+Docker.\
+The system integrates AWS SNS, AWS Lambda, and Amazon CloudWatch to
+implement an event-driven architecture for complaint notifications.
 
-## 🛠️ Tech Stack
-- **Frontend:** React 18 + Vite + Tailwind CSS + React Router v6
-- **Backend:** Node.js + Express.js (in-memory storage, no DB required)
-- **Auth:** JWT-based authentication with bcrypt password hashing
+------------------------------------------------------------------------
 
----
+# Project Overview
 
-## 🚀 Quick Start
+The Hostel Complaint Management System allows:
 
-### 1. Start the Backend
-```bash
-cd backend
-npm install
-npm start
-# Server runs on http://localhost:5000
-```
+-   Students to submit complaints\
+-   Wardens to manage and track complaints
 
-### 2. Start the Frontend
-```bash
-cd frontend
-npm install
-npm run dev
-# App runs on http://localhost:5173
-```
+The application follows a containerized microservice architecture
+deployed on an AWS EC2 instance.
 
----
+## Tech Stack
 
-## 🔐 Demo Credentials
+-   Frontend: React + Nginx\
+-   Backend: Node.js + Express\
+-   Containerization: Docker & Docker Compose\
+-   Cloud Provider: AWS\
+-   Compute: EC2\
+-   Messaging: AWS SNS\
+-   Serverless Processing: AWS Lambda\
+-   Monitoring & Logs: Amazon CloudWatch
 
-| Role    | Email                   | Password    |
-|---------|-------------------------|-------------|
-| Warden  | warden@hostel.com       | warden123   |
-| Warden  | warden2@hostel.com      | warden123   |
-| Student | student@hostel.com      | student123  |
-| Student | student2@hostel.com     | student123  |
-| Student | student3@hostel.com     | student123  |
+------------------------------------------------------------------------
 
-Or **register** a new student account directly from the app.
+# 🚀 Deployment Environment
 
----
+-   AWS EC2 Instance (Ubuntu)
+-   Docker & Docker Compose installed
+-   Security Group configured for:
+    -   Port 22 (SSH)
+    -   Port 80 (HTTP)
 
-## ✨ Features
+------------------------------------------------------------------------
 
-### 👨‍🎓 Student Interface
-- 📊 Dashboard with complaint statistics
-- ➕ File new complaints (8 categories, 4 priority levels)
-- 📋 View and track all personal complaints
-- 💬 See warden responses and status updates
-- 🔔 View hostel announcements
-- 🗑️ Delete own pending complaints
+# 🐳 Container Architecture
 
-### 🎓 Warden Interface
-- 📊 Dashboard with full complaint analytics
-- 📋 View and manage ALL student complaints
-- ✅ Update complaint status (Pending → In Progress → Resolved/Rejected)
-- 💬 Add responses/comments to complaints
-- 👥 View all registered students
-- 📣 Post announcements to students
-- 🔍 Filter by status, category, priority, search
+The system runs two Docker containers:
 
----
+## 1️⃣ Frontend Container
 
-## 📁 Project Structure
+-   Built using React
+-   Served using Nginx
+-   Runs on Port 80
+-   Acts as a Reverse Proxy
+-   Forwards `/api` requests to backend
 
-```
-hostel-cms/
-├── backend/
-│   ├── src/
-│   │   ├── server.js          # Express app entry point
-│   │   ├── middleware/
-│   │   │   └── auth.js        # JWT middleware
-│   │   ├── models/
-│   │   │   └── db.js          # In-memory database with seed data
-│   │   └── routes/
-│   │       ├── auth.js        # Login/Register endpoints
-│   │       ├── complaints.js  # CRUD + status management
-│   │       └── users.js       # Student listing
-│   └── package.json
-│
-└── frontend/
-    ├── src/
-    │   ├── App.jsx             # Router setup
-    │   ├── context/
-    │   │   └── AuthContext.jsx # Auth state management
-    │   ├── hooks/
-    │   │   └── api.js          # Axios API calls & constants
-    │   ├── components/
-    │   │   └── shared/
-    │   │       ├── Layout.jsx  # Sidebar + header layout
-    │   │       └── Badges.jsx  # Status/Priority badges
-    │   └── pages/
-    │       ├── LoginPage.jsx
-    │       ├── RegisterPage.jsx
-    │       ├── student/        # Student-specific pages
-    │       └── warden/         # Warden-specific pages
-    ├── vite.config.js
-    ├── tailwind.config.js
-    └── package.json
-```
+## 2️⃣ Backend Container
 
----
+-   Built using Node.js (Express)
+-   Runs on Port 5000
+-   Handles:
+    -   Authentication
+    -   Complaint management
+    -   User management
+-   Publishes complaint events to AWS SNS
+-   Not publicly exposed
 
-## 🔌 API Endpoints
+------------------------------------------------------------------------
 
-### Auth
-- `POST /api/auth/login` - Login
-- `POST /api/auth/register` - Student registration
+# ▶️ Running the Application
 
-### Complaints
-- `GET /api/complaints` - List (filtered by role)
-- `POST /api/complaints` - Create (student only)
-- `PATCH /api/complaints/:id/status` - Update status (warden only)
-- `DELETE /api/complaints/:id` - Delete
-- `GET /api/complaints/stats/overview` - Statistics
+Start the application using:
 
-### Announcements
-- `GET /api/complaints/announcements/all` - List all
-- `POST /api/complaints/announcements` - Create (warden only)
+docker-compose up --build -d
 
-### Users
-- `GET /api/users/students` - All students (warden only)
-- `GET /api/users/profile` - Own profile
+To verify running containers:
 
----
+docker ps
 
-## 📝 Notes
-- Data is stored **in-memory** — it resets when the server restarts
-- For production, replace `db.js` with MongoDB/PostgreSQL
-- JWT secret should be moved to environment variables in production
+------------------------------------------------------------------------
+
+# 🌐 Port Mapping
+
+  Service    Internal Port   External Port
+  ---------- --------------- ---------------
+  Frontend   80              80
+  Backend    5000            Not Exposed
+
+Important:
+
+-   Only Port 80 is exposed publicly.
+-   Backend Port 5000 is accessible only inside Docker network.
+-   Nginx acts as reverse proxy.
+
+------------------------------------------------------------------------
+
+# 🌍 Application Access
+
+http://`<EC2-Public-IP>`{=html}
+
+------------------------------------------------------------------------
+
+# 🏗 Architecture Overview
+
+User → Nginx → Backend → SNS → Lambda → CloudWatch → User
+
+------------------------------------------------------------------------
+
+# 🔐 Networking & Security
+
+## EC2 Security Group
+
+  Port   Purpose
+  ------ -------------
+  22     SSH Access
+  80     HTTP Access
+  5000   Not Exposed
+
+------------------------------------------------------------------------
+
+# ☁ Serverful vs Serverless Architecture
+
+## Serverful (EC2)
+
+-   Requires server management
+-   Runs continuously
+-   Billed per hour
+-   Hosts frontend and backend containers
+
+## Serverless (AWS Lambda)
+
+-   No server management
+-   Executes only when triggered
+-   Automatically scales
+-   Billed per execution
+-   Triggered by SNS events
+
+------------------------------------------------------------------------
+
+# Conclusion
+
+This project demonstrates:
+
+-   Docker-based containerization
+-   Reverse proxy architecture using Nginx
+-   Secure backend isolation
+-   Event-driven design using AWS SNS
+-   Serverless processing using AWS Lambda
+-   Logging and monitoring with CloudWatch
+-   Hybrid Serverful + Serverless cloud architecture
