@@ -79,10 +79,10 @@ docker ps
 
 # 🌐 Port Mapping
 
-  Service    Internal Port   External Port
-  ---------- --------------- ---------------
-  Frontend   80              80
-  Backend    5000            Not Exposed
+| Service | Internal Port | External Port |
+| :--- | :--- | :--- |
+| Frontend | 80 | [cite_start]80 [cite: 36, 37] |
+| Backend | 5000 | [cite_start]Not Exposed [cite: 39, 40] |
 
 Important:
 
