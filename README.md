@@ -1,7 +1,7 @@
 # Hostel Complaint Management System
 
 A containerized full-stack web application deployed on AWS EC2 using
-Docker.\
+Docker.
 The system integrates AWS SNS, AWS Lambda, and Amazon CloudWatch to
 implement an event-driven architecture for complaint notifications.
 
@@ -11,7 +11,7 @@ implement an event-driven architecture for complaint notifications.
 
 The Hostel Complaint Management System allows:
 
--   Students to submit complaints\
+-   Students to submit complaints
 -   Wardens to manage and track complaints
 
 The application follows a containerized microservice architecture
@@ -19,13 +19,13 @@ deployed on an AWS EC2 instance.
 
 ## Tech Stack
 
--   Frontend: React + Nginx\
--   Backend: Node.js + Express\
--   Containerization: Docker & Docker Compose\
--   Cloud Provider: AWS\
--   Compute: EC2\
--   Messaging: AWS SNS\
--   Serverless Processing: AWS Lambda\
+-   Frontend: React + Nginx
+-   Backend: Node.js + Express
+-   Containerization: Docker & Docker Compose
+-   Cloud Provider: AWS
+-   Compute: EC2
+-   Messaging: AWS SNS
+-   Serverless Processing: AWS Lambda
 -   Monitoring & Logs: Amazon CloudWatch
 
 ------------------------------------------------------------------------
@@ -69,11 +69,11 @@ The system runs two Docker containers:
 
 Start the application using:
 
-docker-compose up --build -d
+`docker-compose up --build -d`
 
 To verify running containers:
 
-docker ps
+`docker ps`
 
 ------------------------------------------------------------------------
 
@@ -81,8 +81,8 @@ docker ps
 
 | Service | Internal Port | External Port |
 | :--- | :--- | :--- |
-| Frontend | 80 | [cite_start]80 [cite: 36, 37] |
-| Backend | 5000 | [cite_start]Not Exposed [cite: 39, 40] |
+| Frontend | 80 | 80 |
+| Backend | 5000 | Not Exposed |
 
 Important:
 
@@ -108,12 +108,11 @@ User → Nginx → Backend → SNS → Lambda → CloudWatch → User
 
 ## EC2 Security Group
 
-  Port   Purpose
-  ------ -------------
-  22     SSH Access
-  80     HTTP Access
-  5000   Not Exposed
-
+| Port | Purpose        |
+|------|---------------|
+| 22   | SSH Access    |
+| 80   | HTTP Access   |
+| 5000 | Not Exposed   |
 ------------------------------------------------------------------------
 
 # ☁ Serverful vs Serverless Architecture
